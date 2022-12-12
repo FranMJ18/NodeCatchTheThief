@@ -68,14 +68,17 @@ app.get('/tokens', (req, res) => {
 // Enviar mensaje a todos los dispositivos
 app.post('/send-message', (req, res) => {
     try{
+        console.log(req.body)
         let msg = req.body.message
         let playersID = req.body.players
         const message = {
-            data: msg,
-            tokens: currentUsersTokens.filter(e => playersID.contains(e.uid)).map(e => e.registrationToken)
+            data: {message: msg},
+            tokens: currentUsersTokens.filter(e => playersID.includes(e.uid)).map(e => e.registrationToken)
         } 
         messaging.sendMulticast(message).then((response) => {
             console.log(response.successCount + ' messages were sent successfully');
+        }).catch(error => {
+            console.error(error)
         })
         return res.status(204).json()
     } catch (error) {
